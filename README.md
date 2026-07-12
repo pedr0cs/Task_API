@@ -6,11 +6,11 @@ API REST para gerenciamento de tarefas, construidas com FASTAPI e Python. Um pro
 API REST que permite adicionar itens a uma lista de tarefas, atualizar, listar e deletar (CRUD) tarefas do gerenciador.
 
 # Tecnologias
-Python
-FastAPI
-Uvicorn
-Git
-SQLite
+- Python
+- FastAPI
+- Uvicorn
+- Git
+- SQLite
  
 # Como Rodar:
 1- Clone o repositorio
