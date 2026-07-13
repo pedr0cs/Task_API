@@ -2,9 +2,6 @@ from asyncio import Task
 from nt import remove
 from fastapi import FastAPI 
  
-
-
-
 app = FastAPI()
 
 tarefas = [
