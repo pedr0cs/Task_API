@@ -1,6 +1,6 @@
-from asyncio import Task
-from nt import remove
 from fastapi import FastAPI 
+
+from database import engine
  
 app = FastAPI()
 
