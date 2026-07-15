@@ -1,6 +1,7 @@
 from fastapi import FastAPI 
+from database import factory  
+from models import Tarefa
 
-from database import engine
  
 app = FastAPI()
 
@@ -15,43 +16,34 @@ def root():
 
 @app.get("/tarefas")
 def listar_tarefas():
-    return tarefas
+    session = factory()
+    tarefas_banco = session.query(Tarefa).all()
+    return tarefas_banco
 
 @app.put('/tarefas/{task_id}')
 def atualizar_tarefa(task_id: int):
-    for task in tarefas:
-        if task['id'] == task_id:
-            task['concluida'] = True
-            return {'mensagem': f'Tarefa {task_id} Atualizada!'}
+    session = factory()
+    tarefa = session.query(Tarefa).filter(Tarefa.id == task_id).first()
+    if tarefa:
+        tarefa.concluida = True
+        session.commit()
+        return {'mensagem': 'Tarefa concluida'}
 
 @app.post("/tarefas")
 def adicionar (descricao: str):
-    id_maior = 0
-    for task in tarefas:
-       if task['id'] > id_maior:
-            id_maior = task["id"]
-
-    novo_id = id_maior + 1
-
-    tarefa_nova = {
-        "id": novo_id,
-        "descricao": 'Estudar Python',
-        "conluida": False
-    }
-
-    tarefas.append(tarefa_nova)
+    tarefa_nova = Tarefa(descricao = descricao, concluida = False)
+    session = factory()
+    session.add(tarefa_nova)
+    session.commit()
     return {"mensagem": "Tarefa adicionada"}
 
 @app.delete("/tarefas/{task_id}")
 def apagar (task_id: int):
-    tarefa_encontrada = None
-    for task in tarefas:
-        if task["id"] == task_id:
-            tarefa_encontrada = task
-
-    if tarefa_encontrada:
-        tarefas.remove(tarefa_encontrada)
-        return{'mensagem': "Tarefa removida"}
-    
+    session = factory()
+    tarefa = session.query(Tarefa).filter(Tarefa.id == task_id).first()
+    if tarefa:
+        session.delete(tarefa)
+        session.commit()
+        return {"mensagem": "Deletado"}
     else:
-        return{"mensagem": "Tarefa nao encontrada, verifique o id"}
+        return {"mensagem": "Não encontrado"}
